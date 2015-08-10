@@ -16,8 +16,7 @@ dory source destination
 where either source or destination can be a remote ssh path.
 
 ## Folder Structure
-For each backup dory will create a new folder with the current date and time.
-Dory will then create two subfolders in `destination`:
+For each backup dory will create a new folder with the current date and time and a log file in the specified `destination`.
 ```
 destination/
     2022_08_10_13_45_31/
