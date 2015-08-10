@@ -19,10 +19,10 @@ where either source or destination can be a remote ssh path.
 For each backup dory will create a new folder with the current date and time and a log file in the specified `destination`.
 ```
 destination/
-    2022_08_10_13_45_31/
-    2022_08_11_13_45_31/
-    2022_08_10_13_45_31.log
-    2022_08_11_13_45_31.log
+    2022_08_10_134531/
+    2022_08_11_134531/
+    2022_08_10_134531.log
+    2022_08_11_134531.log
     ...
 ```
 
