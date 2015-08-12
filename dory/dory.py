@@ -1,5 +1,3 @@
-#!/usr/bin/env python3.4
-
 import sys
 import shutil
 import argparse
@@ -31,5 +29,6 @@ def check_rsync():
         print(colored("rsync not available on system","red"))
         sys.exit(0)
 
-check_rsync()
-parse_arguments()
+def main():
+    check_rsync()
+    parse_arguments()
