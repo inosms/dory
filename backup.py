@@ -3,6 +3,7 @@ import sys
 import time
 import shutil
 import util
+import re
 from termcolor import colored
 
 RSYNC_OPTIONS = "--numeric-ids --delete -az --rsh=ssh"
@@ -29,6 +30,8 @@ def create_base_backup(destination,backup_name,is_remote):
         # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
         # list all folders in destination
         folders = [dir for dir in os.listdir(destination) if os.path.isdir(os.path.join(destination,dir))]
+
+    folders = [dir for dir in folders if re.match(r"\d\d\d\d_\d\d_\d\d_\d\d\d\d\d\d",dir) != None ]
 
     # sort folders by date
     folders.sort()
