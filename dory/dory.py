@@ -8,7 +8,7 @@ from termcolor import colored
 def parse_arguments():
     parser = argparse.ArgumentParser(description="simple file backup tool using rsync")
     parser.add_argument("source",type=str, help="source path for backup, will be backed up in destination")
-    parser.add_argument("destination",type=str, help="destination path for backup, in which a backup and a archive folder will be created")
+    parser.add_argument("destination",type=str, help="destination path for backup")
     parser.add_argument("-r","--restore",action="store_true", help="with restore one connects the source to the backup to open the restoration console")
     args = parser.parse_args()
 
