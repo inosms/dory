@@ -20,10 +20,15 @@ For each backup dory will create a new folder with the current date and time and
 ```
 destination/
     2022_08_10_134531/
-    2022_08_11_134531/
     2022_08_10_134531.log
+    2022_08_11_134531/
     2022_08_11_134531.log
+    2022_08_12_134531.part/    <- currently running backup
+    2022_08_12_134531
     ...
 ```
 
-each folder contains the _whole_ backup, but space usage is minimized due to the use of **hardlinks**.
+Each folder contains the _whole_ backup, but space usage is minimized due to the use of **hardlinks**.
+
+For currently running backups the folder will end with `.part`. In case the backup process crashes one always knows, that those folders are not completely finished!
+After a successful backup the `.part` is removed from the folder name.
