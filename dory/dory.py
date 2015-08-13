@@ -1,7 +1,7 @@
 import sys
 import shutil
 import argparse
-import backup
+from dory import backup
 from termcolor import colored
 
 def parse_arguments():

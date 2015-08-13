@@ -8,7 +8,7 @@ if sys.version_info[0] < 3:
     sys.exit(0)
 
 setup(name='Dory',
-      version='0.0.3',
+      version='0.0.4',
       description='Simple Backup',
       author='inosms',
       url='https://github.com/inosms/dory',

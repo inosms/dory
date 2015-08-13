@@ -2,7 +2,7 @@ import os
 import sys
 import time
 import shutil
-import util
+from dory import util
 import re
 from termcolor import colored
 
