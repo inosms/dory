@@ -1,8 +1,6 @@
-import sys
-import shutil
 import argparse
 from dory import backup
-from termcolor import colored
+from dory import util
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="simple file backup tool using rsync")
@@ -19,11 +17,7 @@ def parse_arguments():
 
     backup.start(SRC,DEST)
 
-def check_rsync():
-    if shutil.which("rsync") is None:
-        print(colored("rsync not available on system","red"))
-        sys.exit(0)
-
 def main():
-    check_rsync()
+    util.check_for("rsync")
+    util.check_for("ssh")
     parse_arguments()

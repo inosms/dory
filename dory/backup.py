@@ -3,6 +3,8 @@ import sys
 import time
 import shutil
 from dory import util
+from dory.util import get_remote_login
+from dory.util import get_remote_path
 import re
 from termcolor import colored
 
@@ -11,33 +13,12 @@ def get_rsync_command(source,destination):
     return "rsync -Ph {} '{}' '{}'".format(RSYNC_OPTIONS,source,destination)
 
 def create_base_backup(destination,backup_name,is_remote):
-    """ creates a base bakcup folder, which is just a
-    hardlinked copy of the previous backup, when existing """
-
+    """creates a base backup folder, which is just a
+    hardlinked copy of the previous backup, when existing
+    """
     print(colored("looking for last backup as base ...","green"))
 
-    folders = []
-
-    if is_remote:
-        # for remote: get list of folders per ssh
-        for line in util.run_command("ssh {} ls -1 -d {}*/"
-            .format(
-                get_remote_login(destination),
-                get_remote_path(destination))):
-            if not "No such file or directory" in line.decode("ascii"):
-                decoded_name = line.decode("ascii")
-                # as we only want to use only the folder name and not the whole path
-                only_folder_name = re.sub("^"+get_remote_path(destination),"",decoded_name)
-                folders.append(util.remove_end_newline(only_folder_name))
-    else:
-        # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
-        # list all folders in destination
-        folders = [dir for dir in os.listdir(destination) if os.path.isdir(os.path.join(destination,dir))]
-
-    folders = [dir for dir in folders if re.match(r"\d\d\d\d_\d\d_\d\d_\d\d\d\d\d\d(.part)?/?",dir) != None ]
-
-    # sort folders by date
-    folders.sort()
+    folders = util.backup_folder_list(destination)
 
     # only if there was one folder copy
     if folders:
@@ -51,7 +32,7 @@ def create_base_backup(destination,backup_name,is_remote):
 
         print("using last backup: {}".format(last_backup))
 
-        if is_remote:
+        if util.is_remote(destination):
             os.system("ssh {} cp -al {} {}"\
                 .format(\
                     get_remote_login(destination),\
@@ -66,14 +47,6 @@ def create_base_backup(destination,backup_name,is_remote):
     else:
         print("no last backup found")
 
-def is_remote(path):
-    return '@' in path
-
-def get_remote_login(destination):
-    return destination.split(':')[0]
-
-def get_remote_path(destination):
-    return destination.split(':')[-1]
 
 def start(source,destination):
     today = time.strftime("%Y_%m_%d_%H%M%S")
@@ -82,9 +55,10 @@ def start(source,destination):
     backupfolder_partial = today+".part"
     backupfolder_full = today
 
-    if is_remote(destination):
+    if util.is_remote(destination):
         create_base_backup(destination,backupfolder_partial,is_remote=True)
 
+        print(colored("starting backup ...","green"))
         rsync_command = get_rsync_command(source,os.path.join(destination,backupfolder_partial))
         # https://unix.stackexchange.com/questions/34273/can-i-pipe-stdout-on-one-server-to-stdin-on-another-server
         result = os.system("{} | ssh {} tee -a {}"
@@ -95,6 +69,7 @@ def start(source,destination):
 
         if result != 0:
             print(colored("backup failed; rsync returned {}".format(result),"red"))
+            sys.exit(1)
         else:
             # rename the partial folder name to the full name at the end
             os.system("ssh {} mv '{}' '{}'"
@@ -105,16 +80,18 @@ def start(source,destination):
                 ))
     else:
         create_base_backup(destination,backupfolder_partial,is_remote=False)
-        print(colored("starting backup ...","green"))
 
+        print(colored("starting backup ...","green"))
         rsync_command = get_rsync_command(source,os.path.join(destination,backupfolder_partial))
         result = os.system("{} | tee -a {}".format(rsync_command,logfile) )
 
         if result != 0:
             print(colored("backup failed; rsync returned {}".format(result),"red"))
+            sys.exit(1)
         else:
             # rename the partial folder name to the full name at the end
             os.rename(os.path.abspath(os.path.join(destination,backupfolder_partial)),
                 os.path.abspath(os.path.join(destination,backupfolder_full)))
 
-            print(colored("backup finished!","green"))
+
+    print(colored("backup finished!","green"))
