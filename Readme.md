@@ -21,10 +21,13 @@ For each backup dory will create a new folder with the current date and time and
 destination/
     2022_08_10_134531/
     2022_08_10_134531.log
-    2022_08_11_134531/
-    2022_08_11_134531.log
-    2022_08_12_134531.part/    <- currently running backup
-    2022_08_12_134531
+
+    2022_08_11_150011/
+    2022_08_11_150011.log
+
+    2022_08_12_091122.part/    <- currently running backup
+    2022_08_12_091122.log
+    
     ...
 ```
 
